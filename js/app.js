@@ -1,39 +1,194 @@
-// Enemies our player must avoid
-var Enemy = function() {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
+let points = 0;
+const score = document.createElement('p');
+score.classList.add('score');
+document.body.appendChild(score);
 
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
-    this.sprite = 'images/enemy-bug.png';
+function updateScore() {
+    score.innerHTML = 'Score: ' + points;
+}
+
+updateScore();
+
+function animateScoreGreen() {
+    score.classList.add('green');
+    setTimeout(function() {
+        score.classList.remove('green');
+    }, 1000)
+}
+
+function animateScoreBlue() {
+    score.classList.add('blue');
+    setTimeout(function() {
+        score.classList.remove('blue');
+    }, 1000)
+}
+
+let health = 3;
+
+const healthBar = document.createElement('div');
+document.body.appendChild(healthBar);
+healthBar.classList.add("health");
+
+
+function generateHealthBar() {
+
+    if (health <= 0) {
+        death();
+    }
+
+    if (healthBar.children.length > 0){
+        let imgArr = Array(...healthBar.children);
+        imgArr.forEach(item => {
+            item.remove();
+        });
+    }
+
+    for (let i = 1; i <= health; i++) {
+        let img = document.createElement('img');
+        img.setAttribute('src', 'images/Heart.png')
+        healthBar.appendChild(img);
+    }
+}
+
+generateHealthBar();
+
+function death() {
+    alert(`You died! Your score: ${points}`);
+    health = 3;
+    points = 0;
+}
+
+const blockSize = {
+    width: 101,
+    height: 85
 };
 
-// Update the enemy's position, required method for game
-// Parameter: dt, a time delta between ticks
-Enemy.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
+const canvasSize = {
+    width: 505,
+    height: 606
 };
 
-// Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
+const startPosition = {
+    x: blockSize.width * 2,
+    y: blockSize.width * 4
+}
 
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
+class Entity {
+    x;
+    y;
+    scrite;
 
+    constructor(x, y, sprite) {
+        this.x = x;
+        this.y = y;
+        this.sprite = sprite;
+    }
 
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
+    render() {
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    }
+}
 
+class Enemy extends Entity {
+    speed = 100 + Math.floor(Math.random() * 222);
 
+    constructor(x, y, sprite) {
+        super(x, y, sprite);
+    }
 
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
+    handleInput(){}
+
+    update(dt) {
+
+        if (this.sprite == "images/enemy-bug.png") {
+            this.x += this.speed * dt;
+
+            if (this.x > 500) {
+                this.x = -50;
+                this.speed = 100 + Math.floor(Math.random() * 222);
+            }
+        } else if (this.sprite == "images/enemy-bug-revert.png") {
+            this.x -= this.speed * dt;
+
+            if (this.x < -150) {
+                this.x = canvasSize.width;
+                this.speed = 100 + Math.floor(Math.random() * 222);
+            };
+        }
+      
+        if (player.x < this.x + 70 &&
+            player.x + 70 > this.x &&
+            player.y < this.y + 60 &&
+            60 + player.y > this.y) {
+
+            player.x = startPosition.x;
+            player.y = startPosition.y;
+
+            if (health <= 1) {
+                death();
+            } else {
+                points -= 5;
+                health--;
+            }
+
+            updateScore();
+            animateScoreBlue();
+            generateHealthBar();
+        };
+    }
+}
+
+class Player extends Entity {
+
+    constructor(x, y, sprite) {
+        super(x, y, sprite);
+    }
+
+    handleInput(keyPress) {
+
+        if (keyPress == 'left' && this.x > 0) {
+            this.x -= blockSize.width;
+        };
+    
+        if (keyPress == 'right' && this.x < 400) {
+            this.x += blockSize.width;
+        };
+    
+        if (keyPress == 'up' && this.y > 0) {
+            this.y -= blockSize.height;
+        };
+    
+        if (keyPress == 'down' && this.y < 395) {
+            this.y += blockSize.height;
+        };
+
+        this.reset();
+    }
+
+    update(){}
+
+    reset() {
+        if (this.y < 0) {
+            alert('You won!');
+            this.x = startPosition.x;
+            this.y = startPosition.y;
+
+            points += 10;
+            updateScore();
+            animateScoreGreen();
+        }
+        
+    }
+}
+
+const allEnemies = [
+    new Enemy( -150, blockSize.height - 30, "images/enemy-bug.png"),
+    new Enemy( canvasSize.width, blockSize.height * 2 - 30, "images/enemy-bug-revert.png"),
+    new Enemy( -150, blockSize.height * 3 - 30, "images/enemy-bug.png"),
+];
+
+const player = new Player(startPosition.x, startPosition.y, "images/char-cat-girl.png");
+
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
         37: 'left',
