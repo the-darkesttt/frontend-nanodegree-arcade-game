@@ -1,3 +1,79 @@
+function menu() {
+
+    const bg = document.createElement('div');
+    bg.classList.add('bg');
+
+    const menu = document.createElement('div');
+    menu.classList.add('menu');
+    
+    const menuTitle = document.createElement('h1');
+    menuTitle.innerText = 'Game Menu';
+
+    const menuDescriprion = document.createElement('p');
+    menuDescriprion.innerText = 'Choose your character!';
+
+    const menuList = document.createElement('ul');
+
+    const playerSkins = [
+        {
+            id: 'boy',
+            src: 'images/char-boy.png',
+        },
+        {
+            id: 'cat-girl',
+            src: 'images/char-cat-girl.png',
+        },
+        {
+            id: 'horn-girl',
+            src: 'images/char-horn-girl.png',
+        },
+        {
+            id: 'pink-girl',
+            src: 'images/char-pink-girl.png',
+        },
+        {
+            id: 'princess-girl',
+            src: 'images/char-princess-girl.png',
+        },
+    ];
+        
+    playerSkins.forEach((item) => {
+        const menuItem = document.createElement('li');
+
+        const itemImg = document.createElement('img');
+        const imgSrc = item.src;
+        const imgId = item.id;
+        itemImg.setAttribute('src', imgSrc);
+        itemImg.setAttribute('id', imgId);
+        const imgDesc = document.createElement('p');
+        imgDesc.innerText = imgId;
+
+        menuList.appendChild(menuItem);
+        menuItem.appendChild(itemImg);
+        menuItem.appendChild(imgDesc);
+    });
+
+    document.body.appendChild(bg);
+    document.body.appendChild(menu);
+    menu.appendChild(menuTitle);
+    menu.appendChild(menuDescriprion);
+    menu.appendChild(menuList);
+
+    menuList.addEventListener('click', (event) => {
+        const listTarget = event.target;
+        if (listTarget.tagName == "UL") return;
+    
+        player.sprite = listTarget.getAttribute("src");
+
+        bg.parentElement.removeChild(bg);
+        menu.parentElement.removeChild(menu);
+
+    });
+    
+}
+
+menu();
+
 let points = 0;
 const score = document.createElement('p');
 score.classList.add('score');
