@@ -95,24 +95,6 @@ body {
     opacity: 0;
 }
 
-/* .menu-animation {
-    animation: fade 1s;
-}
-
-@keyframes fade {
-    0% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-    }
-}
-
-.menu-hidden {
-    opacity: 0;
-    pointer-events: none;
-} */
-
 .menu-score {
     padding: 10px 30px;
     border-radius: 10px;
