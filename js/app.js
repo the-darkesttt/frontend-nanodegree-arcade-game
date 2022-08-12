@@ -1,83 +1,124 @@
-function menu() {
+const playerSkins = [
+    {
+        id: 'boy',
+        src: 'images/char-boy.png',
+    },
+    {
+        id: 'cat-girl',
+        src: 'images/char-cat-girl.png',
+    },
+    {
+        id: 'horn-girl',
+        src: 'images/char-horn-girl.png',
+    },
+    {
+        id: 'pink-girl',
+        src: 'images/char-pink-girl.png',
+    },
+    {
+        id: 'princess-girl',
+        src: 'images/char-princess-girl.png',
+    },
+];
 
-    const bg = document.createElement('div');
-    bg.classList.add('bg');
+class Menu {
+    bg;
+    menu;
+    menuTitle;
+    menuDescriprion;
 
-    const menu = document.createElement('div');
-    menu.classList.add('menu');
+    menuList;
+    menuItem;
+
+    menuScore;
+    menuClose;
+
+    constructor() {
+        this.bg = document.createElement('div');
+        this.bg.classList.add('bg');
+        this.menu = document.createElement('div');
+        this.menu.classList.add('menu');
+        this.menuTitle = document.createElement('h1');
+        this.menuTitle.innerText = 'Game Menu';
+        this.menuDescriprion = document.createElement('p');
+    }
+
+    start() {
+
+        this.menuDescriprion.innerText = 'Choose your character!';
+        this.menuList = document.createElement('ul');
+
+        playerSkins.forEach((item) => {
+            this.menuItem = document.createElement('li');
     
-    const menuTitle = document.createElement('h1');
-    menuTitle.innerText = 'Game Menu';
+            const itemImg = document.createElement('img');
+            const imgSrc = item.src;
+            const imgId = item.id;
+            itemImg.setAttribute('src', imgSrc);
+            itemImg.setAttribute('id', imgId);
+            const imgDesc = document.createElement('p');
+            imgDesc.innerText = imgId;
+    
+            this.menuList.appendChild(this.menuItem);
+            this.menuItem.appendChild(itemImg);
+            this.menuItem.appendChild(imgDesc);
+            
+        });
 
-    const menuDescriprion = document.createElement('p');
-    menuDescriprion.innerText = 'Choose your character!';
+        document.body.appendChild(this.bg);
+        document.body.appendChild(this.menu);
 
-    const menuList = document.createElement('ul');
+        this.menu.appendChild(this.menuTitle);
+        this.menu.appendChild(this.menuDescriprion);
+        this.menu.appendChild(this.menuList);
 
-    const playerSkins = [
-        {
-            id: 'boy',
-            src: 'images/char-boy.png',
-        },
-        {
-            id: 'cat-girl',
-            src: 'images/char-cat-girl.png',
-        },
-        {
-            id: 'horn-girl',
-            src: 'images/char-horn-girl.png',
-        },
-        {
-            id: 'pink-girl',
-            src: 'images/char-pink-girl.png',
-        },
-        {
-            id: 'princess-girl',
-            src: 'images/char-princess-girl.png',
-        },
-    ];
+        this.menuList.addEventListener('click', (event) => {
+            const listTarget = event.target;
+            if (listTarget.tagName == "UL") return;
         
-    playerSkins.forEach((item) => {
-        const menuItem = document.createElement('li');
-
-        const itemImg = document.createElement('img');
-        const imgSrc = item.src;
-        const imgId = item.id;
-        itemImg.setAttribute('src', imgSrc);
-        itemImg.setAttribute('id', imgId);
-        const imgDesc = document.createElement('p');
-        imgDesc.innerText = imgId;
-
-        menuList.appendChild(menuItem);
-        menuItem.appendChild(itemImg);
-        menuItem.appendChild(imgDesc);
-    });
-
-    document.body.appendChild(bg);
-    document.body.appendChild(menu);
-    menu.appendChild(menuTitle);
-    menu.appendChild(menuDescriprion);
-    menu.appendChild(menuList);
-
-    menuList.addEventListener('click', (event) => {
-        const listTarget = event.target;
-        if (listTarget.tagName == "UL") return;
+            player.sprite = listTarget.getAttribute("src");
     
-        player.sprite = listTarget.getAttribute("src");
+            this.bg.classList.add('menu-animation');
+            this.menu.classList.add('menu-animation');
 
-        bg.classList.add('menu-animation');
-        menu.classList.add('menu-animation');
+        });
+    }
 
-        setTimeout(function() {
-            bg.parentElement.removeChild(bg);
-            menu.parentElement.removeChild(menu);
-        }, 1000);
-        
-    });
-    
+    death(points) {
+        if (this.menuList.parentElement != null) {
+            this.menuList.parentElement.removeChild(this.menuList);
+        }
+
+        this.bg.classList.remove('menu-animation');
+        this.menu.classList.remove('menu-animation');
+
+        this.menuDescriprion.innerText = 'You died! Your score:';
+
+        this.menuScore = document.createElement('span');
+        this.menuScore.innerText = points;
+        this.menuScore.classList.add('menu-score');
+
+        this.menu.appendChild(this.menuScore);
+
+        this.menuClose = document.createElement('button');
+        this.menuClose.innerText = 'Close menu and continue';
+        this.menuClose.classList.add('menu-close');
+        this.menu.appendChild(this.menuClose);
+
+        this.menuClose.addEventListener('click', (event) => {
+            this.bg.classList.add('menu-animation');
+            this.menu.classList.add('menu-animation');
+
+            this.menuDescriprion.innerText = '';
+            this.menuScore.parentElement.removeChild(this.menuScore);
+            this.menuClose.parentElement.removeChild(this.menuClose);
+        });
+    }
 }
 
-menu();
+
+const startMenu = new Menu();
+startMenu.start();
 
 let points = 0;
 const score = document.createElement('p');
@@ -110,7 +151,6 @@ const healthBar = document.createElement('div');
 document.body.appendChild(healthBar);
 healthBar.classList.add("health");
 
-
 function generateHealthBar() {
 
     if (health <= 0) {
@@ -134,7 +174,8 @@ function generateHealthBar() {
 generateHealthBar();
 
 function death() {
-    alert(`You died! Your score: ${points}`);
+    startMenu.death(points);
+
     health = 3;
     points = 0;
 }
@@ -271,7 +312,7 @@ const allEnemies = [
 const player = new Player(startPosition.x, startPosition.y, "images/char-cat-girl.png");
 
 document.addEventListener('keyup', function(e) {
-    var allowedKeys = {
+    const allowedKeys = {
         37: 'left',
         38: 'up',
         39: 'right',
