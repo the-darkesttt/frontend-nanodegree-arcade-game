@@ -86,3 +86,16 @@ body {
     border: 1px solid rgba(220, 216, 212, 0.574);
     background-color: rgba(255, 255, 255, 0.127);
 }
+
+.menu-animation {
+    animation: fade 1s;
+}
+
+@keyframes fade {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}

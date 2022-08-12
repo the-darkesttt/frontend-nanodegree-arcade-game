@@ -65,9 +65,14 @@ function menu() {
     
         player.sprite = listTarget.getAttribute("src");
 
-        bg.parentElement.removeChild(bg);
-        menu.parentElement.removeChild(menu);
+        bg.classList.add('menu-animation');
+        menu.classList.add('menu-animation');
 
+        setTimeout(function() {
+            bg.parentElement.removeChild(bg);
+            menu.parentElement.removeChild(menu);
+        }, 1000);
+        
     });
     
 }
