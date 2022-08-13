@@ -93,6 +93,7 @@ body {
 
 .menu-animation {
     opacity: 0;
+    pointer-events: none;
 }
 
 .menu-score {
@@ -113,6 +114,11 @@ body {
     transition: .3s;
     font-size: 20px;
     color: rgb(220, 216, 212);
+}
+
+.menu-close:focus {
+    border: 1px solid rgb(56, 54, 52);
+    outline: 2px solid rgb(87, 206, 232);
 }
 
 .menu-close:hover {
